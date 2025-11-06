@@ -1,0 +1,21 @@
+# Build caches
+.cache/
+
+# Binaries
+/logsviewer
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Go coverage
+coverage.*
+
+# Editors / OS
+.DS_Store
+*.swp
+*.swo
+*.tmp
+*~
+/dist

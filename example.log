@@ -1,0 +1,10 @@
+{"timestamp":"2024-04-12T08:15:21.123Z","level":"INFO","message":"Started processing request","app":"demo-service","requestId":"req-7f9c2c13","userId":"user-42"}
+{"timestamp":"2024-04-12T08:15:21.987Z","level":"DEBUG","message":"Fetching configuration from cache","app":"demo-service","requestId":"req-7f9c2c13","cacheHit":true}
+{"timestamp":"2024-04-12T08:15:22.154Z","level":"INFO","message":"Validated payload successfully","app":"demo-service","requestId":"req-7f9c2c13","payloadSize":5123}
+{"timestamp":"2024-04-12T08:15:22.643Z","level":"WARN","message":"Upstream latency exceeded threshold","app":"demo-service","requestId":"req-7f9c2c13","latencyMs":482}
+{"timestamp":"2024-04-12T08:15:22.914Z","level":"INFO","message":"Retrying upstream call","app":"demo-service","requestId":"req-7f9c2c13","attempt":2}
+{"timestamp":"2024-04-12T08:15:23.102Z","level":"INFO","message":"Upstream response received","app":"demo-service","requestId":"req-7f9c2c13","statusCode":200}
+{"timestamp":"2024-04-12T08:15:23.221Z","level":"DEBUG","message":"Persisting result to datastore","app":"demo-service","requestId":"req-7f9c2c13","recordsWritten":3}
+{"timestamp":"2024-04-12T08:15:23.584Z","level":"INFO","message":"Emitting notification event","app":"demo-service","requestId":"req-7f9c2c13","eventId":"evt-3b21d8fa"}
+{"timestamp":"2024-04-12T08:15:24.043Z","level":"INFO","message":"Completed processing request","app":"demo-service","requestId":"req-7f9c2c13","durationMs":2920}
+{"timestamp":"2024-04-12T08:15:24.047Z","level":"DEBUG","message":"Request cleanup finished","app":"demo-service","requestId":"req-7f9c2c13","cleanupMs":12}
