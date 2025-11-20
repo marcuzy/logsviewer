@@ -329,8 +329,14 @@ func (m *Model) rebuildList() {
 
 	items := make([]list.Item, len(entries))
 	extraField := m.currentExtraField()
+	highlightQuery := strings.TrimSpace(m.searchQuery)
 	for i, entry := range entries {
-		items[i] = logItem{entry: entry, extraField: extraField}
+		items[i] = logItem{
+			entry:          entry,
+			extraField:     extraField,
+			highlightQuery: highlightQuery,
+			highlightStyle: m.styles.highlight,
+		}
 	}
 
 	curIndex := m.list.Index()
@@ -367,6 +373,7 @@ func (m *Model) updateViewportFromSelection() {
 	if content == "" {
 		content = logItem.entry.Raw
 	}
+	content = highlightText(content, m.searchQuery, m.styles.highlight)
 	m.viewport.SetContent(content)
 }
 
@@ -450,9 +457,38 @@ type errMsg struct {
 	err error
 }
 
+func highlightText(text, query string, style lipgloss.Style) string {
+	query = strings.TrimSpace(query)
+	if text == "" || query == "" {
+		return text
+	}
+
+	lowerText := strings.ToLower(text)
+	lowerQuery := strings.ToLower(query)
+
+	var b strings.Builder
+	start := 0
+	for {
+		idx := strings.Index(lowerText[start:], lowerQuery)
+		if idx == -1 {
+			b.WriteString(text[start:])
+			break
+		}
+		idx += start
+		end := idx + len(query)
+		b.WriteString(text[start:idx])
+		b.WriteString(style.Render(text[idx:end]))
+		start = end
+	}
+
+	return b.String()
+}
+
 type logItem struct {
-	entry      logs.LogEntry
-	extraField string
+	entry          logs.LogEntry
+	extraField     string
+	highlightQuery string
+	highlightStyle lipgloss.Style
 }
 
 func (i logItem) Title() string {
@@ -462,17 +498,17 @@ func (i logItem) Title() string {
 		message = i.entry.Raw
 	}
 	if ts != "" {
-		return fmt.Sprintf("%s  %s", ts, message)
+		return highlightText(fmt.Sprintf("%s  %s", ts, message), i.highlightQuery, i.highlightStyle)
 	}
-	return message
+	return highlightText(message, i.highlightQuery, i.highlightStyle)
 }
 
 func (i logItem) Description() string {
 	val := i.entry.ExtraValue(i.extraField)
 	if val == "" {
-		return i.entry.Path
+		return highlightText(i.entry.Path, i.highlightQuery, i.highlightStyle)
 	}
-	return val
+	return highlightText(val, i.highlightQuery, i.highlightStyle)
 }
 
 func (i logItem) FilterValue() string {
@@ -484,16 +520,18 @@ func (i logItem) FilterValue() string {
 }
 
 type styles struct {
-	list   lipgloss.Style
-	detail lipgloss.Style
-	status lipgloss.Style
+	list      lipgloss.Style
+	detail    lipgloss.Style
+	status    lipgloss.Style
+	highlight lipgloss.Style
 }
 
 func defaultStyles() styles {
 	return styles{
-		list:   lipgloss.NewStyle().Padding(0, 1, 0, 1),
-		detail: lipgloss.NewStyle().Padding(0, 1, 0, 1),
-		status: lipgloss.NewStyle().Padding(0, 1).Foreground(lipgloss.Color("244")),
+		list:      lipgloss.NewStyle().Padding(0, 1, 0, 1),
+		detail:    lipgloss.NewStyle().Padding(0, 1, 0, 1),
+		status:    lipgloss.NewStyle().Padding(0, 1).Foreground(lipgloss.Color("244")),
+		highlight: lipgloss.NewStyle().Foreground(lipgloss.Color("0")).Background(lipgloss.Color("229")),
 	}
 }
 
